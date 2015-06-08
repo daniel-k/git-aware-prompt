@@ -20,7 +20,23 @@ find_git_dirty() {
   fi
 }
 
-PROMPT_COMMAND="find_git_branch; find_git_dirty; $PROMPT_COMMAND"
+shorten_path() {
+    local git_root
+
+    git_cwd="$(pwd)"
+
+    if [ -z "$git_branch" ]; then
+        [[ "$git_cwd" =~ ^"$HOME"(/|$) ]] && git_cwd="~${git_cwd#$HOME}"
+    else
+        git_root="$(git rev-parse --show-toplevel)"
+        git_cwd="$(basename $git_root)${git_cwd#$git_root}/"
+    fi
+}
+
+PROMPT_COMMAND="find_git_branch; find_git_dirty; shorten_path; $PROMPT_COMMAND"
+
+export PS1="\${debian_chroot:+(\$debian_chroot)}\[\033[01;32m\]\u\[\033[00m\]:\[\033[01;34m\]\$git_cwd\[\033[00m\] \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\$ "
+
 
 # Default Git enabled prompt with dirty state
 # export PS1="\u@\h \w \[$txtcyn\]\$git_branch\[$txtred\]\$git_dirty\[$txtrst\]\$ "
