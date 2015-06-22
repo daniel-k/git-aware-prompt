@@ -29,7 +29,7 @@ shorten_path() {
         [[ "$git_cwd" =~ ^"$HOME"(/|$) ]] && git_cwd="~${git_cwd#$HOME}"
     else
         git_root="$(git rev-parse --show-toplevel)"
-        git_cwd="$(basename $git_root)${git_cwd#$git_root}/"
+        git_cwd="$(basename $git_root)/$(git rev-parse --show-prefix)"
     fi
 }
 
